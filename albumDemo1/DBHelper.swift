@@ -36,7 +36,7 @@ class DBHelper {
     //MARK: ------------------------- CREATE TABLE -------------------------
     
     func createTable() {
-        let createTableString = "CREATE TABLE IF NOT EXISTS person(Id INTEGER PRIMARY KEY, name TEXT,age INTEGER);"
+        let createTableString = "CREATE TABLE IF NOT EXISTS person(Id INTEGER PRIMARY KEY, name TEXT,age INTEGER, imageUrl STRING);"
         var createTableStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, createTableString, -1, &createTableStatement, nil) == SQLITE_OK {
             if sqlite3_step(createTableStatement) == SQLITE_DONE {
@@ -52,7 +52,7 @@ class DBHelper {
     
     //MARK: ------------------------- INSERT DATA -------------------------
     
-    func insert(id:Int, name:String, age:Int) {
+    func insert(id:Int, name:String, age:Int, imageUrl:String) {
         let persons = read()
         
         for p in persons {
@@ -60,12 +60,13 @@ class DBHelper {
                 return
             }
         }
-        let insertStatementstring = "INSERT INTO person (Id, name, age) VALUES (?, ?, ?);"
+        let insertStatementstring = "INSERT INTO person (Id, name, age, imageUrl) VALUES (?, ?, ?, ?);"
         var insertStatement:OpaquePointer? = nil
         if sqlite3_prepare_v2(db, insertStatementstring, -1, &insertStatement, nil) == SQLITE_OK {
             sqlite3_bind_int(insertStatement, 1, Int32(id))
             sqlite3_bind_text(insertStatement, 2, (name as NSString).utf8String, -1, nil)
             sqlite3_bind_int(insertStatement, 3, Int32(age))
+            sqlite3_bind_text(insertStatement, 4, (imageUrl as NSString).utf8String, -1, nil)
             
             if sqlite3_step(insertStatement) == SQLITE_DONE {
                 print("Successfully inserted row.")
@@ -90,9 +91,10 @@ class DBHelper {
                 let id = sqlite3_column_int(queryStatement, 0)
                 let name = String(describing: String(cString: sqlite3_column_text(queryStatement, 1)))
                 let year = sqlite3_column_int(queryStatement, 2)
-                psns.append(Person(name: name, age: Int(year), id: Int(id)))
+                let imageUrl = String(describing: String(cString: sqlite3_column_text(queryStatement, 3)))
+                psns.append(Person(name: name, age: Int(year), id: Int(id), imageUrl: imageUrl))
                 print("Query Result:")
-                print("\(id) | \(name) | \(year)")
+                print("\(id) | \(name) | \(year) | \(imageUrl)")
             }
         } else {
             print("SELECT statement could not be prepared")

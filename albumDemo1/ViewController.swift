@@ -25,10 +25,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.albumTable.delegate = self
         self.albumTable.dataSource = self
         
-        db.insert(id: 1, name: "John", age: 24)
-        db.insert(id: 2, name: "Thor", age: 25)
-        db.insert(id: 3, name: "Edward", age: 22)
-        db.insert(id: 4, name: "Ronald", age: 44)
+        db.insert(id: 1, name: "John", age: 24, imageUrl: <#String#>)
+        db.insert(id: 2, name: "Thor", age: 25, imageUrl: <#String#>)
+        db.insert(id: 3, name: "Edward", age: 22, imageUrl: <#String#>)
+        db.insert(id: 4, name: "Ronald", age: 44, imageUrl: <#String#>)
         
         persons = db.read()
     }
